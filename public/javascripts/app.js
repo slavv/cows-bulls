@@ -1,22 +1,34 @@
 'use strict';
 
-// Declare app level module which depends on views, and components
-angular.module('CowsBulls', ['ngRoute'])
-  .config(['$routeProvider', function($routeProvider) {
-    $routeProvider.otherwise({redirectTo: '/'});
+// Declare app level module which depends on filters, and services
 
-    $routeProvider.when('/', {
-      templateUrl: 'views/index.html',
+angular.module('myApp', [
+  'ui.router',
+  'myApp.controllers',
+  'myApp.filters',
+  'myApp.services',
+  'myApp.directives'
+])
+.config(function($stateProvider, $urlRouterProvider) {
+  
+  // For any unmatched url, redirect to /state1
+  $urlRouterProvider.otherwise("/");
+  
+  // Now set up the states
+  $stateProvider
+    .state('home', {
+      url: "/",
+      templateUrl: 'partials/home',
       controller: 'HomeCtrl'
-    });
-
-    $routeProvider.when('/game/:gameId', {
-      templateUrl: 'views/game.html',
-      controller: 'HomeCtrl',
+    })
+    .state('game', {
+      url: "/game/:id",
+      templateUrl: 'partials/game',
+      controller: 'GameCtrl',
       resolve: {
-        gameId: ['$routeParams', function ($routeParams) {
-          return {id: $routeParams.id};
+        game: ['$stateParams', 'Game', function($stateParams, Game) {
+          return Game.get($stateParams.id);
         }]
       }
-    });
-  }]);
+    })
+});

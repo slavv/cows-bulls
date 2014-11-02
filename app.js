@@ -5,8 +5,11 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var gamesModel = require('./games-model');
+var session = require('express-session');
+var shortId = require('shortid');
 
-var routes = require('./routes/index')(gamesModel);
+var staticResources = require('./routes/index');
+var gameApi = require('./routes/game')(gamesModel);
 
 var app = express();
 
@@ -21,8 +24,19 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret: 'I like node',
+  resave: true,
+  saveUninitialized: true
+}));
 
-app.use('/', routes);
+app.use(function(req, res, next) {
+  req.session.uid = req.session.uid || shortId.generate();
+  next();
+})
+
+app.use('/', staticResources);
+app.use('/game', gameApi);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');

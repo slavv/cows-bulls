@@ -1,0 +1,6 @@
+div
+  input(type=number, ng-model='guess')
+  .btn.btn-default(ng-click='sendGuess(guess)') Guess
+div
+  div(ng-repeat='guess in game.tried') 
+    span {{guess.number}}: {{guess.result.cows}} cows and {{guess.result.bulls}} bulls

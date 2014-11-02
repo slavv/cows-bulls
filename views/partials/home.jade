@@ -1,0 +1,8 @@
+p This is the partial for view 1.
+.btn.btn-default(ng-click='createGame(false)') New Game
+.btn.btn-default(ng-click='createGame(true)') New Game with bot.
+div
+  div(ng-repeat='game in games')
+    span {{game.id}}
+    .btn.btn-default(ng-click='joinGame(game.id)') Join game
+    a.btn.btn-default(ui-sref='game(game.id)') Go to game
